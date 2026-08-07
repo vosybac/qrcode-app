@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo QR Code</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+        h1 { text-align: center; color: #1a2a3a; }
+        .card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        label { font-weight: 600; color: #333; display: block; margin-bottom: 8px; }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+        }
+        button {
+            margin-top: 12px;
+            background: #2f6fed;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover { background: #1e55c4; }
+        .error { color: #d32f2f; background: #fdecea; padding: 10px; border-radius: 6px; margin-top: 12px; }
+        .qr-result { text-align: center; }
+        .qr-result img {
+            width: 260px;
+            height: 260px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .qr-result p { color: #555; word-break: break-all; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e3e8ee; font-size: 14px; }
+        th { background: #f7f9fc; color: #333; }
+        td.text-cell { max-width: 420px; word-break: break-all; }
+        .empty { color: #888; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>QR Code Generator</h1>
+
+    <div class="card">
+        <form th:action="@{/generate}" th:object="${textEntry}" method="post">
+            <label for="text">Nhập nội dung cần tạo QR Code</label>
+            <textarea id="text" th:field="*{text}" placeholder="Gõ text bất kỳ tại đây..."></textarea>
+            <button type="submit">Tạo QR Code</button>
+            <div class="error" th:if="${error}" th:text="${error}"></div>
+        </form>
+    </div>
+
+    <div class="card qr-result" th:if="${qrDataUri != null}">
+        <h2>QR Code vừa tạo</h2>
+        <img th:src="${qrDataUri}" alt="QR Code">
+        <p th:text="'Nội dung: ' + ${lastEntry.text}"></p>
+    </div>
+
+    <div class="card">
+        <h2>Lịch sử đã lưu</h2>
+        <div class="empty" th:if="${#lists.isEmpty(entries)}">Chưa có dữ liệu.</div>
+        <table th:unless="${#lists.isEmpty(entries)}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nội dung</th>
+                <th>Thời điểm tạo</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry : ${entries}">
+                <td th:text="${entry.id}"></td>
+                <td class="text-cell" th:text="${entry.text}"></td>
+                <td th:text="${#temporals.format(entry.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

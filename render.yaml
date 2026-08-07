@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: qrcode-app
+    runtime: java
+    plan: free
+    buildCommand: ./mvnw clean package
+    startCommand: java -Xmx256m -jar target/qrcode-app-1.0.0.jar --server.port=$PORT
+    healthCheckPath: /
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
