@@ -1,3 +1,9 @@
+databases:
+  - name: qrcode-db
+    databaseName: qrcode_db
+    user: qrcode_app
+    plan: free
+
 services:
   - type: web
     name: qrcode-app
@@ -5,3 +11,24 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     healthCheckPath: /
+    envVars:
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: qrcode-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: qrcode-db
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: qrcode-db
+          property: database
+      - key: DATABASE_USER
+        fromDatabase:
+          name: qrcode-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: qrcode-db
+          property: password
